@@ -1,0 +1,176 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import { getCollection, type CollectionEntry } from 'astro:content';
+
+interface SesionFrontmatter {
+  title: string;
+  order: number;
+  duration: string;
+  objectives?: string[];
+  modulos?: string[];
+  tareas?: string[];
+  prerequisites?: string[];
+}
+
+interface TareaFrontmatter {
+  title: string;
+  type?: string;
+  deadline?: string;
+}
+
+export async function getStaticPaths() {
+  // Patrones DEBEN ser strings estáticos (Vite los analiza en build).
+  // Filtramos por slug dentro del código.
+  // Las funciones helper también: Vite/Astro extrae este bloque a un chunk
+  // independiente y los `function` top-level no son visibles dentro.
+  // Path desde src/pages/cursos/[slug]/[sesion].astro → src/content/cursos/...
+  // requiere 3 niveles de "..": pages/cursos/[slug] → pages/cursos → pages → src.
+  const sesionesGlob = import.meta.glob<{ frontmatter: SesionFrontmatter }>(
+    '../../../content/cursos/*/sesion-*/sesion.md',
+    { eager: true },
+  );
+  const tareasGlob = import.meta.glob<{ frontmatter: TareaFrontmatter }>(
+    '../../../content/cursos/*/sesion-*/tareas.md',
+    { eager: true },
+  );
+
+  const cursos = await getCollection('cursos');
+  const paths: any[] = [];
+
+  for (const curso of cursos) {
+    const sesionesDelCurso = Object.entries(sesionesGlob)
+      .filter(([path]) => path.includes(`/cursos/${curso.data.slug}/sesion-`))
+      .map(([key, mod]) => ({ key, fm: mod.frontmatter }))
+      .sort((a, b) => a.fm.order - b.fm.order);
+
+    for (const sesion of sesionesDelCurso) {
+      // Slug de la sesión a partir de la ruta del archivo (penúltimo segmento).
+      const sesionSlug = sesion.key.split('/').slice(-2, -1)[0];
+
+      const tareaEntry = Object.entries(tareasGlob).find(
+        ([p]) => p.includes(`/cursos/${curso.data.slug}/${sesionSlug}/tareas.md`),
+      );
+      paths.push({
+        params: { slug: curso.data.slug, sesion: sesionSlug },
+        props: {
+          curso,
+          sesion,
+          tarea: tareaEntry ? { key: tareaEntry[0], fm: tareaEntry[1].frontmatter } : null,
+          // Pasamos la lista de sesiones del mismo curso para navegación.
+          sesionesMismoCurso: sesionesDelCurso.map((s) => ({
+            slug: s.key.split('/').slice(-2, -1)[0],
+            title: s.fm.title,
+            order: s.fm.order,
+          })),
+        },
+      });
+    }
+  }
+  return paths;
+}
+
+interface Props {
+  curso: CollectionEntry<'cursos'>;
+  sesion: { key: string; fm: SesionFrontmatter };
+  tarea: { key: string; fm: TareaFrontmatter } | null;
+  sesionesMismoCurso: Array<{ slug: string; title: string; order: number }>;
+}
+
+const { curso, sesion, tarea, sesionesMismoCurso } = Astro.props as Props;
+const sesionSlug = sesion.key.split('/').slice(-2, -1)[0];
+
+const sesionActual = sesionesMismoCurso.findIndex((s) => s.slug === sesionSlug);
+const sesionAnterior = sesionActual > 0 ? sesionesMismoCurso[sesionActual - 1] : null;
+const sesionSiguiente =
+  sesionActual >= 0 && sesionActual < sesionesMismoCurso.length - 1
+    ? sesionesMismoCurso[sesionActual + 1]
+    : null;
+---
+
+<Layout
+  title={`${sesion.fm.title} — ${curso.data.title}`}
+  description={`Sesión ${sesion.fm.order} del curso ${curso.data.title}`}
+>
+  <main class="mx-auto max-w-4xl px-6 py-16">
+    <header class="mb-10 border-b border-[var(--color-border)] pb-8">
+      <a href="/cursos/" class="badge mb-2 inline-block">← Catálogo</a>
+      <a href={`/cursos/${curso.data.slug}/`} class="badge mb-4 ml-2 inline-block">← {curso.data.title}</a>
+      <div class="mb-2 text-xs font-semibold uppercase tracking-wider text-[var(--color-accent)]">
+        Sesión {sesion.fm.order} · {sesion.fm.duration}
+      </div>
+      <h1 class="text-3xl font-bold tracking-tight md:text-4xl">
+        {sesion.fm.title}
+      </h1>
+    </header>
+
+    {sesion.fm.objectives && sesion.fm.objectives.length > 0 && (
+      <section class="mb-10">
+        <h2 class="mb-3 text-xl font-semibold">Objetivos</h2>
+        <ul class="space-y-1 text-[var(--color-text-muted)]">
+          {sesion.fm.objectives.map((o) => <li>· {o}</li>)}
+        </ul>
+      </section>
+    )}
+
+    {sesion.fm.modulos && sesion.fm.modulos.length > 0 && (
+      <section class="mb-10">
+        <h2 class="mb-3 text-xl font-semibold">Módulos</h2>
+        <ol class="space-y-2">
+          {sesion.fm.modulos.map((modSlug) => (
+            <li>
+              <a
+                href={`/cursos/${curso.data.slug}/${sesionSlug}/${modSlug}/`}
+                class="card flex items-center justify-between"
+              >
+                <span>{modSlug}</span>
+                <span class="text-sm text-[var(--color-text-muted)]">→</span>
+              </a>
+            </li>
+          ))}
+        </ol>
+        <p class="mt-3 text-xs text-[var(--color-text-muted)]">
+          Los módulos se renderizan cuando existan archivos <code>modulo-*.md</code> en la sesión.
+        </p>
+      </section>
+    )}
+
+    {tarea && (
+      <section class="mb-10">
+        <h2 class="mb-3 text-xl font-semibold">Tarea final</h2>
+        <a
+          href={`/cursos/${curso.data.slug}/${sesionSlug}/tareas/`}
+          class="card block"
+        >
+          <div class="font-semibold">{tarea.fm.title}</div>
+          {tarea.fm.deadline && (
+            <div class="mt-1 text-sm text-[var(--color-text-muted)]">
+              Entrega: {tarea.fm.deadline}
+            </div>
+          )}
+          {tarea.fm.type && (
+            <div class="mt-2">
+              <span class="badge">{tarea.fm.type}</span>
+            </div>
+          )}
+        </a>
+      </section>
+    )}
+
+    <nav class="mt-12 flex items-center justify-between border-t border-[var(--color-border)] pt-6 text-sm">
+      <div>
+        {sesionAnterior && (
+          <a href={`/cursos/${curso.data.slug}/${sesionAnterior.slug}/`} class="text-[var(--color-accent)]">
+            ← Sesión {sesionAnterior.order}
+          </a>
+        )}
+      </div>
+      <div>
+        {sesionSiguiente && (
+          <a href={`/cursos/${curso.data.slug}/${sesionSiguiente.slug}/`} class="text-[var(--color-accent)]">
+            Sesión {sesionSiguiente.order} →
+          </a>
+        )}
+      </div>
+    </nav>
+  </main>
+</Layout>

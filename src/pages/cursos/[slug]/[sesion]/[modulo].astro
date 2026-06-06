@@ -1,0 +1,144 @@
+---
+import Layout from '../../../../layouts/Layout.astro';
+import { getCollection, type CollectionEntry } from 'astro:content';
+import type { MarkdownInstance } from 'astro';
+
+interface ModuloFrontmatter {
+  title: string;
+  order?: number;
+  duration?: string;
+  objectives?: string[];
+}
+
+export async function getStaticPaths() {
+  // El glob DEBE estar dentro de getStaticPaths (pitfall plan 002).
+  // Las funciones helper también: Vite/Astro extrae este bloque a un chunk
+  // independiente y los `function` top-level no son visibles dentro.
+  // Path desde src/pages/cursos/[slug]/[sesion]/[modulo].astro → src/content/...
+  // requiere 4 niveles de "..": sesion → [slug] → cursos → pages → src.
+  const modulosGlob = import.meta.glob<MarkdownInstance<Record<string, unknown>>>(
+    '../../../../content/cursos/*/sesion-*/*.md',
+    { eager: true },
+  );
+
+  const cursos = await getCollection('cursos');
+  const paths: any[] = [];
+
+  for (const [key, mod] of Object.entries(modulosGlob)) {
+    const filename = key.split('/').pop() ?? '';
+    // Excluir el overview de la sesión y el overview del curso.
+    if (filename === 'sesion.md' || filename === 'curso.md') continue;
+
+    // Slug de archivo (sin extensión .md) y de carpetas de la ruta.
+    const keyParts = key.split('/');
+    const cursoSlugFromPath = keyParts[keyParts.length - 3];
+    const sesionSlugFromPath = keyParts[keyParts.length - 2];
+    const fileSlug = filename.replace(/\.md$/, '');
+
+    const curso = cursos.find((c) => c.data.slug === cursoSlugFromPath);
+    if (!curso) continue;
+
+    // Calcula los módulos hermanos (excluyendo sesion.md y curso.md).
+    const modulosHermanos = Object.entries(modulosGlob)
+      .filter(([k]) => {
+        const fn = k.split('/').pop() ?? '';
+        const kParts = k.split('/');
+        return (
+          kParts[kParts.length - 3] === cursoSlugFromPath &&
+          kParts[kParts.length - 2] === sesionSlugFromPath &&
+          fn !== 'sesion.md' &&
+          fn !== 'curso.md'
+        );
+      })
+      .map(([k, m]) => ({
+        slug: (k.split('/').pop() ?? '').replace(/\.md$/, ''),
+        title: (m.frontmatter as ModuloFrontmatter).title,
+      }));
+
+    paths.push({
+      params: {
+        slug: cursoSlugFromPath,
+        sesion: sesionSlugFromPath,
+        modulo: fileSlug,
+      },
+      props: {
+        curso,
+        Content: mod.Content,
+        frontmatter: mod.frontmatter as ModuloFrontmatter,
+        modulosHermanos,
+      },
+    });
+  }
+  return paths;
+}
+
+interface Props {
+  curso: CollectionEntry<'cursos'>;
+  Content: any;
+  frontmatter: ModuloFrontmatter;
+  modulosHermanos: Array<{ slug: string; title: string }>;
+}
+
+const { curso, Content, frontmatter, modulosHermanos } = Astro.props as Props;
+const sesionSlug = Astro.params.sesion as string;
+const moduloSlug = Astro.params.modulo as string;
+const isTareas = moduloSlug === 'tareas';
+const backHref = `/cursos/${curso.data.slug}/${sesionSlug}/`;
+---
+
+<Layout
+  title={`${frontmatter.title} — ${curso.data.title}`}
+  description={`${frontmatter.title} (${curso.data.title})`}
+>
+  <main class="mx-auto max-w-3xl px-6 py-16">
+    <header class="mb-10 border-b border-[var(--color-border)] pb-8">
+      <a href="/cursos/" class="badge mb-2 inline-block">← Catálogo</a>
+      <a href={`/cursos/${curso.data.slug}/`} class="badge mb-2 ml-2 inline-block">← {curso.data.title}</a>
+      <a href={backHref} class="badge mb-4 ml-2 inline-block">← Sesión</a>
+
+      <div class="mb-2 text-xs font-semibold uppercase tracking-wider text-[var(--color-accent)]">
+        {isTareas ? 'Tarea final' : 'Módulo'} · {frontmatter.duration ?? 'duración variable'}
+      </div>
+      <h1 class="text-3xl font-bold tracking-tight md:text-4xl">
+        {frontmatter.title}
+      </h1>
+
+      {frontmatter.objectives && frontmatter.objectives.length > 0 && (
+        <ul class="mt-4 space-y-1 text-sm text-[var(--color-text-muted)]">
+          {frontmatter.objectives.map((o) => <li>· {o}</li>)}
+        </ul>
+      )}
+    </header>
+
+    <article class="prose-biblioteca">
+      <Content />
+    </article>
+
+    {modulosHermanos.length > 1 && (
+      <nav class="mt-12 border-t border-[var(--color-border)] pt-6">
+        <p class="mb-3 text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">
+          En esta sesión
+        </p>
+        <ol class="space-y-1 text-sm">
+          {modulosHermanos.map((m) => (
+            <li>
+              <a
+                href={`/cursos/${curso.data.slug}/${sesionSlug}/${m.slug}/`}
+                class:list={[
+                  'block',
+                  m.slug === moduloSlug && 'text-[var(--color-accent)] font-semibold',
+                ]}
+              >
+                {m.title}
+              </a>
+            </li>
+          ))}
+        </ol>
+      </nav>
+    )}
+
+    <footer class="mt-8 border-t border-[var(--color-border)] pt-6 text-sm text-[var(--color-text-muted)]">
+      <a href={backHref}>← Volver a la sesión</a>
+    </footer>
+  </main>
+</Layout>

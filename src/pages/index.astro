@@ -2,75 +2,142 @@
 import Layout from '../layouts/Layout.astro';
 ---
 
-<Layout title="Biblioteca de Conocimiento — Inicio">
+<Layout title="Biblioteca Astillero Digital — Inicio">
   <main class="mx-auto max-w-5xl px-6 py-16">
     <!-- Header -->
     <header class="mb-16 border-b border-[var(--color-border)] pb-10">
-      <span class="badge mb-4">v0.1 · en construcción</span>
+      <span class="badge mb-4">v0.2 · en construcción</span>
       <h1 class="text-5xl font-bold tracking-tight md:text-6xl">
-        Biblioteca de <span class="text-[var(--color-accent)]">Conocimiento</span>
+        Biblioteca <span class="text-[var(--color-accent)]">Astillero Digital</span>
       </h1>
       <p class="mt-4 max-w-2xl text-lg text-[var(--color-text-muted)]">
-        Plataforma para acceder y gestionar el conocimiento que se comparte.
-        Los cursos se planean en <code class="text-[var(--color-accent)]">Temas/</code>
-        y se integran aquí como recursos de la biblioteca.
+        Un repositorio abierto de procedimientos, herramientas y estrategias de aprendizaje. A disposición libre.
       </p>
     </header>
 
-    <!-- Sección: estado actual -->
+    <!-- Manifiesto -->
+    <section class="mb-16">
+      <h2 class="mb-6 text-2xl font-semibold">Qué es esto</h2>
+      <div class="prose-biblioteca max-w-3xl">
+        <p>
+          Esta plataforma es mi <strong>repositorio personal de notas, hecho público</strong>. Nace de una necesidad doble:
+        </p>
+        <ul>
+          <li>
+            <strong>Documentar los procedimientos y herramientas</strong> que uso en el astillero de manera regular, para que estén a la mano cuando se necesitan y para que cualquiera del equipo pueda consultarlos.
+          </li>
+          <li>
+            <strong>Compartir las estrategias de aprendizaje</strong> que me han ayudado a entender los sistemas, herramientas y lenguajes que manejo día a día.
+          </li>
+        </ul>
+        <p>
+          Pero no es solo tecnología. Aquí también cabe lo que alimenta el alma: <strong>música, ciencia, gestión de calidad, temas sociales</strong>. Cualquier cosa que merezca ser pensada dos veces y explicada con cuidado.
+        </p>
+        <p>
+          La audiencia es doble: gente técnica que ya programa y quiere profundizar, y gente no técnica que necesita aprender una materia específica para su trabajo. Cada curso declara para quién es.
+        </p>
+        <p class="text-[var(--color-text-muted)]">
+          En resumen: <em>aprendizaje autodidacta, hecho con la práctica de años, a disposición libre</em>.
+        </p>
+      </div>
+    </section>
+
+    <!-- Apartados navegables -->
     <section class="mb-12">
-      <h2 class="mb-6 text-2xl font-semibold">¿Qué encontrarás aquí?</h2>
-      <div class="grid gap-4 md:grid-cols-3">
-        <article class="card">
-          <div class="mb-2 text-sm font-semibold uppercase tracking-wider text-[var(--color-accent)]">
-            Cursos
+      <h2 class="mb-6 text-2xl font-semibold">Apartados</h2>
+      <div class="grid gap-4 md:grid-cols-2">
+        <a href="/cursos/" class="card group flex flex-col">
+          <div class="mb-2 flex items-center justify-between">
+            <span class="text-sm font-semibold uppercase tracking-wider text-[var(--color-accent)]">
+              Cursos
+            </span>
+            <span class="text-[var(--color-accent)] transition-transform group-hover:translate-x-1">→</span>
           </div>
-          <h3 class="mb-2 text-lg font-semibold">Temario estructurado</h3>
+          <h3 class="mb-2 text-lg font-semibold">Catálogo de cursos</h3>
           <p class="text-sm text-[var(--color-text-muted)]">
-            Sesiones y módulos diseñados en Obsidian, listos para integrarse como cursos.
+            Cursos estructurados con sesiones, módulos y tareas. Cada uno declara duración, audiencia y nivel.
+          </p>
+        </a>
+
+        <article class="card opacity-60">
+          <div class="mb-2 flex items-center justify-between">
+            <span class="text-sm font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">
+              Aplicativos
+            </span>
+            <span class="badge">Próximamente</span>
+          </div>
+          <h3 class="mb-2 text-lg font-semibold">Herramientas interactivas</h3>
+          <p class="text-sm text-[var(--color-text-muted)]">
+            Mini-aplicaciones para experimentar los conceptos de cada curso sin instalar nada.
           </p>
         </article>
 
-        <article class="card">
-          <div class="mb-2 text-sm font-semibold uppercase tracking-wider text-[var(--color-accent)]">
-            Recursos
+        <article class="card opacity-60">
+          <div class="mb-2 flex items-center justify-between">
+            <span class="text-sm font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">
+              Exámenes
+            </span>
+            <span class="badge">Próximamente</span>
           </div>
-          <h3 class="mb-2 text-lg font-semibold">Material descargable</h3>
+          <h3 class="mb-2 text-lg font-semibold">Evaluación por curso</h3>
           <p class="text-sm text-[var(--color-text-muted)]">
-            PDFs, ejemplos de código y referencias curadas para cada tema.
+            Quizzes, preguntas abiertas y autoevaluación con rúbrica por módulo.
           </p>
         </article>
 
-        <article class="card">
-          <div class="mb-2 text-sm font-semibold uppercase tracking-wider text-[var(--color-accent)]">
-            Comunidad
+        <article class="card opacity-60">
+          <div class="mb-2 flex items-center justify-between">
+            <span class="text-sm font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">
+              Recursos
+            </span>
+            <span class="badge">Próximamente</span>
           </div>
-          <h3 class="mb-2 text-lg font-semibold">Acceso abierto</h3>
+          <h3 class="mb-2 text-lg font-semibold">Descargables</h3>
           <p class="text-sm text-[var(--color-text-muted)]">
-            Conocimiento compartido, sin puertas cerradas. Próximamente.
+            PDFs, cheatsheets y archivos de referencia por curso. Export vía API Kinse.
           </p>
         </article>
       </div>
     </section>
 
-    <!-- Sección: roadmap -->
+    <!-- Roadmap -->
     <section class="mb-16">
       <h2 class="mb-6 text-2xl font-semibold">Roadmap</h2>
       <ol class="space-y-3 text-[var(--color-text-muted)]">
         <li class="flex gap-3">
-          <span class="text-[var(--color-accent)]">→</span>
-          <span>Indexar los cursos de <code class="text-[var(--color-accent)]">Temas/</code> y mostrarlos como catálogo.</span>
+          <span class="text-[var(--color-accent)]">✓</span>
+          <span><s>Catálogo público de cursos con sesiones y módulos navegables.</s> <span class="text-xs">(hecho — <a href="/cursos/" class="text-[var(--color-accent)]">ver catálogo</a>)</span></span>
         </li>
         <li class="flex gap-3">
-          <span class="text-[var(--color-accent)]">→</span>
-          <span>Render de las sesiones (Markdown) con navegación entre módulos.</span>
+          <span class="text-[var(--color-accent)]">✓</span>
+          <span><s>Render del Markdown de los cursos con el estilo de la biblioteca.</s> <span class="text-xs">(hecho)</span></span>
         </li>
         <li class="flex gap-3">
-          <span class="text-[var(--color-accent)]">→</span>
-          <span>Búsqueda y filtros por tema, tecnología y nivel.</span>
+          <span class="text-[var(--color-accent)]">✓</span>
+          <span><s>Integrar el primer curso (Desarrollo Web, Sesión 1).</s> <span class="text-xs">(hecho)</span></span>
         </li>
         <li class="flex gap-3">
-          <span class="text-[var(--color-accent)]">→</span>
+          <span class="text-[var(--color-text-muted)]">→</span>
+          <span>Sesiones 2 a 4 de Desarrollo Web (componentes, layouts, interactividad).</span>
+        </li>
+        <li class="flex gap-3">
+          <span class="text-[var(--color-accent)]">✓</span>
+          <span><s>Segundo curso: Mailjet (taller de newsletter interno para equipos de comunicación).</s> <span class="text-xs">(hecho — <a href="/cursos/mailjet/" class="text-[var(--color-accent)]">ver curso</a>)</span></span>
+        </li>
+        <li class="flex gap-3">
+          <span class="text-[var(--color-text-muted)]">→</span>
+          <span>Búsqueda y filtros por tema, tecnología y nivel en el catálogo.</span>
+        </li>
+        <li class="flex gap-3">
+          <span class="text-[var(--color-text-muted)]">→</span>
+          <span>Aplicativos interactivos por módulo (playground embebido).</span>
+        </li>
+        <li class="flex gap-3">
+          <span class="text-[var(--color-text-muted)]">→</span>
+          <span>Exámenes con corrección automática y rúbrica visible.</span>
+        </li>
+        <li class="flex gap-3">
+          <span class="text-[var(--color-text-muted)]">→</span>
           <span>Generación de PDF por curso (vía la API Kinse ya existente).</span>
         </li>
       </ol>

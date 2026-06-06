@@ -1,0 +1,146 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import { getCollection, type CollectionEntry } from 'astro:content';
+import type { ComponentProps } from 'astro/types';
+
+// Importa los frontmatters de las sesiones de TODOS los cursos.
+// Filtramos por slug dentro de getStaticPaths.
+// `?raw` no es necesario — queremos frontmatter, no el body.
+const sesionesGlob = import.meta.glob<{ frontmatter: SesionFrontmatter }>(
+  '../../../content/cursos/*/sesion-*/sesion.md',
+  { eager: true },
+);
+
+interface SesionFrontmatter {
+  title: string;
+  order: number;
+  duration: string;
+  objectives?: string[];
+  modulos?: string[];
+  tareas?: string[];
+  prerequisites?: string[];
+}
+
+function getSesiones(slug: string): Array<{ key: string; fm: SesionFrontmatter }> {
+  return Object.entries(sesionesGlob)
+    .filter(([path]) => path.includes(`/cursos/${slug}/sesion-`))
+    .map(([key, mod]) => ({ key, fm: mod.frontmatter }))
+    .sort((a, b) => a.fm.order - b.fm.order);
+}
+
+export async function getStaticPaths() {
+  const cursos = await getCollection('cursos');
+  return cursos.map((curso) => ({
+    params: { slug: curso.data.slug },
+    props: { curso },
+  }));
+}
+
+interface Props {
+  curso: CollectionEntry<'cursos'>;
+}
+
+const { curso } = Astro.props as Props;
+const sesiones = getSesiones(curso.data.slug);
+
+const niveles = {
+  fundamentos: 'Fundamentos',
+  aplicado: 'Aplicado',
+  maestria: 'Maestría',
+} as const;
+
+const formatos = {
+  bootcamp: 'Bootcamp',
+  taller: 'Taller',
+  'crash-course': 'Crash course',
+  tutorial: 'Tutorial',
+} as const;
+---
+
+<Layout
+  title={`${curso.data.title} — Biblioteca Astillero Digital`}
+  description={curso.data.description}
+>
+  <main class="mx-auto max-w-4xl px-6 py-16">
+    <header class="mb-12 border-b border-[var(--color-border)] pb-8">
+      <a href="/cursos/" class="badge mb-4 inline-block">← Catálogo</a>
+      <div class="mb-3 flex flex-wrap gap-2">
+        <span class="badge">{niveles[curso.data.level]}</span>
+        <span class="badge">{formatos[curso.data.format]}</span>
+        {curso.data.stack.map((s) => <span class="badge">{s}</span>)}
+      </div>
+      <h1 class="text-4xl font-bold tracking-tight md:text-5xl">
+        {curso.data.title}
+      </h1>
+      <p class="mt-3 max-w-3xl text-lg text-[var(--color-text-muted)]">
+        {curso.data.description}
+      </p>
+      <dl class="mt-6 grid gap-4 text-sm sm:grid-cols-2">
+        <div>
+          <dt class="font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">Duración</dt>
+          <dd class="mt-1">{curso.data.duration}</dd>
+        </div>
+        <div>
+          <dt class="font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">Audiencia</dt>
+          <dd class="mt-1">{curso.data.audience}</dd>
+        </div>
+        <div>
+          <dt class="font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">Instructor</dt>
+          <dd class="mt-1">{curso.data.instructor}</dd>
+        </div>
+        <div>
+          <dt class="font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">Estado</dt>
+          <dd class="mt-1">{curso.data.status}</dd>
+        </div>
+      </dl>
+    </header>
+
+    {curso.data.prerequisites.length > 0 && (
+      <section class="mb-10">
+        <h2 class="mb-3 text-xl font-semibold">Prerrequisitos</h2>
+        <ul class="space-y-1 text-[var(--color-text-muted)]">
+          {curso.data.prerequisites.map((p) => <li>• {p}</li>)}
+        </ul>
+      </section>
+    )}
+
+    <section>
+      <h2 class="mb-4 text-2xl font-semibold">Sesiones</h2>
+      {sesiones.length === 0 ? (
+        <p class="text-[var(--color-text-muted)]">
+          Las sesiones de este curso aún no se han integrado.
+        </p>
+      ) : (
+        <ol class="space-y-3">
+          {sesiones.map((sesion) => (
+            <li>
+              <a
+                href={`/cursos/${curso.data.slug}/${sesion.key.split('/').slice(-2, -1)[0]}/`}
+                class="card flex items-start justify-between gap-4"
+              >
+                <div>
+                  <div class="mb-1 text-xs font-semibold uppercase tracking-wider text-[var(--color-accent)]">
+                    Sesión {sesion.fm.order}
+                  </div>
+                  <div class="font-semibold">{sesion.fm.title}</div>
+                  {sesion.fm.objectives && sesion.fm.objectives.length > 0 && (
+                    <ul class="mt-2 space-y-0.5 text-sm text-[var(--color-text-muted)]">
+                      {sesion.fm.objectives.slice(0, 3).map((o) => <li>· {o}</li>)}
+                    </ul>
+                  )}
+                </div>
+                <div class="shrink-0 text-sm text-[var(--color-text-muted)]">
+                  {sesion.fm.duration}
+                </div>
+              </a>
+            </li>
+          ))}
+        </ol>
+      )}
+    </section>
+
+    <footer class="mt-16 border-t border-[var(--color-border)] pt-6 text-sm text-[var(--color-text-muted)]">
+      <a href="/cursos/">← Volver al catálogo</a>
+    </footer>
+  </main>
+</Layout>

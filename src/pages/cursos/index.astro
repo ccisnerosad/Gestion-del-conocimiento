@@ -1,0 +1,92 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+
+const cursos = await getCollection('cursos');
+const publicados = cursos
+  .filter((c) => c.data.status === 'published')
+  .sort((a, b) => a.data.order - b.data.order);
+
+const tracks = {
+  'desarrollo-web': 'Desarrollo Web',
+  'apis-comunicacion': 'APIs de Comunicación',
+  'devops-infra': 'DevOps e Infraestructura',
+  'ia-automatizacion': 'IA y Automatización',
+  datos: 'Datos',
+} as const;
+
+const niveles = {
+  fundamentos: 'Fundamentos',
+  aplicado: 'Aplicado',
+  maestria: 'Maestría',
+} as const;
+
+const formatos = {
+  bootcamp: 'Bootcamp',
+  taller: 'Taller',
+  'crash-course': 'Crash course',
+  tutorial: 'Tutorial',
+} as const;
+
+function formatDuration(c: typeof cursos[number]['data']): string {
+  return c.duration;
+}
+---
+
+<Layout title="Cursos — Biblioteca Astillero Digital" description="Catálogo de cursos de la Biblioteca Astillero Digital">
+  <main class="mx-auto max-w-5xl px-6 py-16">
+    <header class="mb-12 border-b border-[var(--color-border)] pb-8">
+      <a href="/" class="badge mb-4 inline-block">← Inicio</a>
+      <h1 class="text-4xl font-bold tracking-tight md:text-5xl">
+        Catálogo de <span class="text-[var(--color-accent)]">cursos</span>
+      </h1>
+      <p class="mt-3 max-w-2xl text-[var(--color-text-muted)]">
+        Cursos estructurados, revisados y publicados. Cada uno declara duración, audiencia, nivel y stack.
+      </p>
+    </header>
+
+    {publicados.length === 0 && (
+      <section class="card text-center">
+        <p class="mb-2 text-lg font-semibold">Aún no hay cursos integrados</p>
+        <p class="text-sm text-[var(--color-text-muted)]">
+          Los cursos viven en el repositorio de contenido. Cuando se integre el primero, aparecerá aquí.
+        </p>
+      </section>
+    )}
+
+    {publicados.length > 0 && (
+      <section class="space-y-12">
+        {Object.entries(tracks).map(([trackKey, trackLabel]) => {
+          const cursosTrack = publicados.filter((c) => c.data.track === trackKey);
+          if (cursosTrack.length === 0) return null;
+          return (
+            <div>
+              <h2 class="mb-4 text-2xl font-semibold">{trackLabel}</h2>
+              <div class="grid gap-4 md:grid-cols-2">
+                {cursosTrack.map((curso) => (
+                  <a href={`/cursos/${curso.data.slug}/`} class="card block">
+                    <div class="mb-3 flex flex-wrap gap-2">
+                      <span class="badge">{niveles[curso.data.level]}</span>
+                      <span class="badge">{formatos[curso.data.format]}</span>
+                    </div>
+                    <h3 class="mb-2 text-lg font-semibold">{curso.data.title}</h3>
+                    <p class="mb-3 text-sm text-[var(--color-text-muted)]">
+                      {curso.data.description}
+                    </p>
+                    <p class="text-xs text-[var(--color-text-muted)]">
+                      {formatDuration(curso.data)}
+                    </p>
+                  </a>
+                ))}
+              </div>
+            </div>
+          );
+        })}
+      </section>
+    )}
+
+    <footer class="mt-16 border-t border-[var(--color-border)] pt-6 text-sm text-[var(--color-text-muted)]">
+      {publicados.length} curso{publicados.length === 1 ? '' : 's'} publicado{publicados.length === 1 ? '' : 's'}.
+    </footer>
+  </main>
+</Layout>

@@ -1,5 +1,8 @@
 # Plan: Estructura inicial de cursos, categorías y agente experto
 
+**Estado:** listo
+**Cerrado:** 2025-01-01 (commit ba87331)
+
 ## Contexto
 
 El proyecto `Gestion-del-conocimiento` está en su punto fundacional: ya existe `planes/` con directrices, ya están los dos cursos pensados (`mailjet`, `desarrollo web`) en `Temas/`, pero falta:
@@ -199,3 +202,27 @@ Crear `planes/cursos-actuales.md` con la tabla de cursos del vault `Temas/` mape
 - Mailjet NO tiene `Temas/mailjet/Sesión 1/Modulo 0.md` — no requiere setup. Eso confirma que el Módulo 0 es opcional y debe depender del curso, no ser obligatorio.
 - Mailjet tampoco tiene `Tareas/` — es contenido de capacitación sin entregables. Confirma que `tareas.md` también es opcional.
 - La estructura tiene que ser flexible: no todos los cursos tienen M0 ni tareas.
+
+## Resultado real
+
+Ejecutado en commit `ba87331` y anteriores (`68c57ed`, `fd42c24`, `e6857f6`, `65387d8`).
+
+| Criterio | Estado | Evidencia |
+|---|---|---|
+| `/AGENTS.md` existe y es el antiguo `planes/AGENTS.md` | ✅ | `git log --follow AGENTS.md` |
+| `planes/AGENTS.md` ya no existe | ✅ | `find planes -name AGENTS.md` |
+| `planes/dev/README.md` con sección "Skills del agente" | ✅ | Stack Astro 6, sistema visual, workflow de planes documentados |
+| `planes/contenido/README.md` con estructura canónica | ✅ | Árbol de carpetas + 4 schemas de frontmatter (curso, sesión, módulo, tarea) |
+| `planes/categorias.md` con 5 ejes | ✅ | track, level, format, stack, audience |
+| `planes/cursos-actuales.md` con mapeo | ✅ | 2 cursos mapeados |
+| `planes/contenido/ejemplos/desarrollo-web/` con 8 archivos | ✅ | Blueprint + placeholders |
+
+**Pendientes que se arrastraron al plan 002:**
+- `src/content.config.ts` con Zod schema de la collection `cursos`.
+- Catálogo público (`/cursos/`, `/cursos/<slug>/`, `/cursos/<slug>/<sesion>/`, `/cursos/<slug>/<sesion>/<modulo>/`).
+- Root `README.md` específico del proyecto (reemplazaba el boilerplate de Astro).
+
+**Lecciones aprendidas (para la skill del dev agent):**
+- **Planes retrospectivos**: este plan nació DESPUÉS de ejecutar la mayor parte del trabajo. La regla a futuro es: abrir plan antes de tocar código. Ver `planes/dev/README.md` para la convención.
+- **Taxonomía multi-eje vs jerárquica**: el usuario validó la multi-eje ("genera las categorías que creas pertinentes"). Documentar en el AGENTS que esta es la decisión de diseño.
+- **Schemas opinionados**: el Zod schema de `src/content.config.ts` se debe sincronizar con lo que dice `planes/contenido/README.md`. Si cambias uno, cambia el otro.

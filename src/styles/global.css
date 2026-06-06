@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 /* ============================================================
-   Sistema visual — Biblioteca de Conocimiento
+   Sistema visual — Biblioteca Astillero Digital
    Inspirado en astillerodigital.com
    ============================================================ */
 
@@ -125,5 +125,63 @@
     background-color: var(--color-bg-muted);
     border: 1px solid var(--color-border);
     border-radius: var(--radius-default);
+  }
+
+  /* Prose para el cuerpo de los cursos. Migrado de
+     src/pages/cursos/[slug]/[sesion]/[modulo].astro para que esté
+     disponible en cualquier página que renderice Markdown de cursos. */
+  .prose-biblioteca {
+    color: var(--color-text);
+    line-height: 1.7;
+  }
+  .prose-biblioteca h2 {
+    margin-top: 2rem;
+    margin-bottom: 0.75rem;
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
+  .prose-biblioteca h3 {
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+  }
+  .prose-biblioteca p {
+    margin-bottom: 1rem;
+  }
+  .prose-biblioteca ul,
+  .prose-biblioteca ol {
+    margin-bottom: 1rem;
+    padding-left: 1.5rem;
+  }
+  .prose-biblioteca ul { list-style: disc; }
+  .prose-biblioteca ol { list-style: decimal; }
+  .prose-biblioteca li { margin-bottom: 0.25rem; }
+  .prose-biblioteca code {
+    background-color: var(--color-bg-muted);
+    padding: 0.125rem 0.375rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.9em;
+  }
+  .prose-biblioteca pre {
+    background-color: var(--color-bg-elevated);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-default);
+    padding: 1rem;
+    overflow-x: auto;
+    margin-bottom: 1rem;
+  }
+  .prose-biblioteca pre code {
+    background: transparent;
+    padding: 0;
+  }
+  .prose-biblioteca blockquote {
+    border-left: 3px solid var(--color-accent);
+    padding-left: 1rem;
+    margin: 1rem 0;
+    color: var(--color-text-muted);
+  }
+  .prose-biblioteca a {
+    color: var(--color-accent);
   }
 }
