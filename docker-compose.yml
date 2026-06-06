@@ -1,0 +1,28 @@
+# ============================================================
+# Biblioteca de Conocimiento — Astro static site
+# Despliegue local en :8082
+# ============================================================
+
+services:
+  biblioteca:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: biblioteca-conocimiento:latest
+    container_name: biblioteca-conocimiento
+    restart: unless-stopped
+    ports:
+      - "8082:8082"
+    networks:
+      - biblioteca-net
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:8082/"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+
+networks:
+  biblioteca-net:
+    name: biblioteca-net
+    driver: bridge

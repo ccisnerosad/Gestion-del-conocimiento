@@ -1,0 +1,16 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="404 — Página no encontrada" description="La página que buscas no existe.">
+  <main class="mx-auto flex min-h-[80vh] max-w-2xl flex-col items-center justify-center px-6 text-center">
+    <span class="badge mb-6">Error 404</span>
+    <h1 class="text-5xl font-bold text-[var(--color-accent)] md:text-6xl">
+      Página no encontrada
+    </h1>
+    <p class="mt-4 text-lg text-[var(--color-text-muted)]">
+      El recurso que buscas no existe o fue movido. Vuelve al inicio para explorar la biblioteca.
+    </p>
+    <a href="/" class="btn-primary mt-8">← Volver al inicio</a>
+  </main>
+</Layout>

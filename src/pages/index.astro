@@ -1,0 +1,83 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Biblioteca de Conocimiento — Inicio">
+  <main class="mx-auto max-w-5xl px-6 py-16">
+    <!-- Header -->
+    <header class="mb-16 border-b border-[var(--color-border)] pb-10">
+      <span class="badge mb-4">v0.1 · en construcción</span>
+      <h1 class="text-5xl font-bold tracking-tight md:text-6xl">
+        Biblioteca de <span class="text-[var(--color-accent)]">Conocimiento</span>
+      </h1>
+      <p class="mt-4 max-w-2xl text-lg text-[var(--color-text-muted)]">
+        Plataforma para acceder y gestionar el conocimiento que se comparte.
+        Los cursos se planean en <code class="text-[var(--color-accent)]">Temas/</code>
+        y se integran aquí como recursos de la biblioteca.
+      </p>
+    </header>
+
+    <!-- Sección: estado actual -->
+    <section class="mb-12">
+      <h2 class="mb-6 text-2xl font-semibold">¿Qué encontrarás aquí?</h2>
+      <div class="grid gap-4 md:grid-cols-3">
+        <article class="card">
+          <div class="mb-2 text-sm font-semibold uppercase tracking-wider text-[var(--color-accent)]">
+            Cursos
+          </div>
+          <h3 class="mb-2 text-lg font-semibold">Temario estructurado</h3>
+          <p class="text-sm text-[var(--color-text-muted)]">
+            Sesiones y módulos diseñados en Obsidian, listos para integrarse como cursos.
+          </p>
+        </article>
+
+        <article class="card">
+          <div class="mb-2 text-sm font-semibold uppercase tracking-wider text-[var(--color-accent)]">
+            Recursos
+          </div>
+          <h3 class="mb-2 text-lg font-semibold">Material descargable</h3>
+          <p class="text-sm text-[var(--color-text-muted)]">
+            PDFs, ejemplos de código y referencias curadas para cada tema.
+          </p>
+        </article>
+
+        <article class="card">
+          <div class="mb-2 text-sm font-semibold uppercase tracking-wider text-[var(--color-accent)]">
+            Comunidad
+          </div>
+          <h3 class="mb-2 text-lg font-semibold">Acceso abierto</h3>
+          <p class="text-sm text-[var(--color-text-muted)]">
+            Conocimiento compartido, sin puertas cerradas. Próximamente.
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <!-- Sección: roadmap -->
+    <section class="mb-16">
+      <h2 class="mb-6 text-2xl font-semibold">Roadmap</h2>
+      <ol class="space-y-3 text-[var(--color-text-muted)]">
+        <li class="flex gap-3">
+          <span class="text-[var(--color-accent)]">→</span>
+          <span>Indexar los cursos de <code class="text-[var(--color-accent)]">Temas/</code> y mostrarlos como catálogo.</span>
+        </li>
+        <li class="flex gap-3">
+          <span class="text-[var(--color-accent)]">→</span>
+          <span>Render de las sesiones (Markdown) con navegación entre módulos.</span>
+        </li>
+        <li class="flex gap-3">
+          <span class="text-[var(--color-accent)]">→</span>
+          <span>Búsqueda y filtros por tema, tecnología y nivel.</span>
+        </li>
+        <li class="flex gap-3">
+          <span class="text-[var(--color-accent)]">→</span>
+          <span>Generación de PDF por curso (vía la API Kinse ya existente).</span>
+        </li>
+      </ol>
+    </section>
+
+    <footer class="border-t border-[var(--color-border)] pt-6 text-sm text-[var(--color-text-muted)]">
+      Construido con Astro + Tailwind 4 · Estilo inspirado en astillerodigital.com
+    </footer>
+  </main>
+</Layout>

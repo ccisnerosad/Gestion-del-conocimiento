@@ -1,0 +1,16 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="500 — Error del servidor" description="Algo salió mal en el servidor.">
+  <main class="mx-auto flex min-h-[80vh] max-w-2xl flex-col items-center justify-center px-6 text-center">
+    <span class="badge mb-6">Error 500</span>
+    <h1 class="text-5xl font-bold text-[var(--color-accent)] md:text-6xl">
+      Error del servidor
+    </h1>
+    <p class="mt-4 text-lg text-[var(--color-text-muted)]">
+      Algo no salió como esperábamos. Intenta de nuevo en unos minutos.
+    </p>
+    <a href="/" class="btn-primary mt-8">← Volver al inicio</a>
+  </main>
+</Layout>
